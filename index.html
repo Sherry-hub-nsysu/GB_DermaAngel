@@ -6,8 +6,8 @@
   <title>DermaAngel｜經銷商開發工作台</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20261103-layout2" />
-  <link rel="stylesheet" href="discovery.css?v=20261103-layout2" />
+  <link rel="stylesheet" href="styles.css?v=20261103-layout5" />
+  <link rel="stylesheet" href="discovery.css?v=20261103-layout5" />
 </head>
 <body>
   <aside class="sidebar">
@@ -78,11 +78,11 @@
   <dialog id="overviewStatDialog"><div class="overview-stat-content"><div class="dialog-head"><div><span class="tiny-label">OVERVIEW DETAILS</span><h2 id="overviewStatTitle">公司名單</h2><p class="dialog-intro" id="overviewStatSummary"></p></div><button type="button" class="close-dialog" id="closeOverviewStat">×</button></div><div class="overview-stat-list" id="overviewStatList"></div><div class="dialog-actions"><button type="button" class="outline" id="closeOverviewStatBottom">關閉</button></div></div></dialog>
   <dialog id="competitorPriceDialog"><form method="dialog" id="competitorPriceForm"><div class="dialog-head"><div><span class="tiny-label">COMPETITOR PRICE</span><h2>新增競品價格</h2></div><button type="button" class="close-dialog" id="closePriceDialog">×</button></div><p class="dialog-intro">記錄商品在特定市場和通路的價格，並保留來源方便核對。</p><div class="form-grid"><label>國家 / 市場<select name="country" id="priceCountry" required></select></label><label>競品品牌<input name="brand" required placeholder="例如：La Roche-Posay" /></label><label>產品名稱<input name="product" required placeholder="例如：Cicaplast Baume B5+" /></label><label>規格<input name="size" placeholder="例如：40 ml" /></label><label>價格<input name="price" type="number" min="0" step="0.01" required placeholder="例如：12.90" /></label><label>幣別<input name="currency" id="priceCurrency" required maxlength="3" placeholder="EUR" /></label><label>銷售通路<input name="channel" placeholder="例如：Pharmacy / E-commerce" /></label><label>查價日期<input name="checkedAt" type="date" required /></label><label class="full">商品頁 / 來源網址<input name="sourceUrl" type="url" placeholder="https://…" /></label><label class="full">備註<textarea name="notes" rows="2" placeholder="折扣、容量、套組或其他價格條件"></textarea></label></div><div class="dialog-actions"><button type="button" class="outline" id="cancelPriceDialog">取消</button><button class="primary" id="saveCompetitorPrice" value="default">儲存價格</button></div></form></dialog>
   <div class="modal-backdrop" id="contactModal"><div class="contact-modal"><button class="close-dialog" id="closeContact">×</button><span class="tiny-label">PARTNER PROFILE</span><h2 id="contactName">Partner</h2><div id="contactDetails"></div><button class="primary full-btn" id="addToPipeline">＋ 加入我的開發名單</button><p class="contact-disclaimer">聯絡資訊為示範資料，正式接洽前請再次確認。</p></div></div>
-  <script src="distributors-data.js?v=20261103-save2"></script>
-  <script src="app.js?v=20261103-save2"></script>
-  <script src="competitor-prices.js?v=20261103-save2"></script>
-  <script src="price-import-grouping.js?v=20261103-save2"></script>
-  <script src="overview-stat-details.js?v=20261103-save2"></script>
-  <script src="persistence-enhancements.js?v=20261103-save2"></script>
+  <script src="distributors-data.js?v=20261103-save9"></script>
+  <script src="app.js?v=20261103-save9"></script>
+  <script src="competitor-prices.js?v=20261103-save9"></script>
+  <script src="price-import-grouping.js?v=20261103-save9"></script>
+  <script src="overview-stat-details.js?v=20261103-save9"></script>
+  <script src="persistence-enhancements.js?v=20261103-save9"></script>
 </body>
 </html>

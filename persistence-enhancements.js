@@ -1,15 +1,27 @@
 // Autosave enhancements for distributor records and email workbench.
 // Wrap the shared save path so every page reports browser-storage failures.
+const followupStorageKey = lead => `${String(lead.country||'').trim().toLowerCase()}|${String(lead.company||'').trim().toLowerCase()}`;
+function saveLeadCopies() {
+  const serialized = JSON.stringify(leads);
+  localStorage.setItem('da-leads', serialized);
+  localStorage.setItem('da-leads-backup-v1', serialized);
+  if (localStorage.getItem('da-leads') !== serialized || localStorage.getItem('da-leads-backup-v1') !== serialized) throw new Error('Lead backup write verification failed');
+}
+function saveFollowupIndex() {
+  const index = Object.fromEntries(leads.map(lead => [followupStorageKey(lead), lead.followup || '']));
+  const serialized = JSON.stringify(index);
+  localStorage.setItem('da-followup-dates-v1', serialized);
+  if (localStorage.getItem('da-followup-dates-v1') !== serialized) throw new Error('Follow-up write verification failed');
+}
 const originalLeadPersist = persist;
 persist = function() {
-  try { originalLeadPersist(); if (localStorage.getItem('da-leads') !== JSON.stringify(leads)) throw new Error('Storage write verification failed'); return true; }
+  try { originalLeadPersist(); saveLeadCopies(); saveFollowupIndex(); return true; }
   catch (error) { toast('經銷商資料未能儲存，請確認瀏覽器儲存空間後重試'); return false; }
 };
 function persistLeadRecord(lead) {
   try {
-    const serialized = JSON.stringify(leads);
-    localStorage.setItem('da-leads', serialized);
-    if (localStorage.getItem('da-leads') !== serialized) throw new Error('Storage write verification failed');
+    saveLeadCopies();
+    saveFollowupIndex();
     return true;
   } catch (error) {
     toast('資料無法儲存，請確認瀏覽器儲存空間');
@@ -33,6 +45,7 @@ showLeadInfo = function(company) {
   const form = $('#leadInfoEditForm');
   const status = $('#leadSaveStatus');
   let saveTimer;
+  let editorClosed = false;
   const collectAndSave = () => {
     const values = Object.fromEntries([...form.querySelectorAll('[data-lead-field]')].map(input => [input.dataset.leadField, input.value]));
     const duplicate = leads.find(item => item !== lead && item.company.trim().toLowerCase() === values.company.trim().toLowerCase() && marketList(item).some(market => marketList({country: values.country}).includes(market)));
@@ -49,7 +62,9 @@ showLeadInfo = function(company) {
     status.textContent = persistLeadRecord(lead) ? '已自動儲存' : '儲存失敗，請重試';
     return true;
   };
-  const closeAndRefresh = () => { clearTimeout(saveTimer); if (collectAndSave()) { persist(); dialog.close(); } };
+  const flushLeadEditor = () => { clearTimeout(saveTimer); if (!editorClosed) collectAndSave(); };
+  window.activeLeadEditorFlush = flushLeadEditor;
+  const closeAndRefresh = () => { clearTimeout(saveTimer); if (collectAndSave()) { persist(); editorClosed = true; window.activeLeadEditorFlush = null; dialog.close(); } };
   form.addEventListener('input', () => { status.textContent = '正在儲存…'; clearTimeout(saveTimer); saveTimer = setTimeout(collectAndSave, 450); });
   form.addEventListener('change', () => { clearTimeout(saveTimer); collectAndSave(); });
   form.addEventListener('submit', event => { event.preventDefault(); closeAndRefresh(); });
@@ -65,8 +80,12 @@ showLeadInfo = function(company) {
     const remove = event.target.closest('[data-remove-custom]');
     if (remove) { remove.closest('.lead-custom-field').remove(); clearTimeout(saveTimer); collectAndSave(); }
   });
-  dialog.oncancel = event => { clearTimeout(saveTimer); if (collectAndSave()) persist(); };
+  dialog.oncancel = event => { clearTimeout(saveTimer); if (collectAndSave()) persist(); editorClosed = true; window.activeLeadEditorFlush = null; };
+  dialog.addEventListener('close', () => { editorClosed = true; window.activeLeadEditorFlush = null; }, {once:true});
 };
+
+window.addEventListener('pagehide', () => { if (window.activeLeadEditorFlush) window.activeLeadEditorFlush(); });
+window.addEventListener('beforeunload', () => { if (window.activeLeadEditorFlush) window.activeLeadEditorFlush(); });
 
 // Keep the email composer and its generated draft after reloads.
 const mailWorkFields = ['emailLead','mailBrand','mailSender','mailCompany','mailContact','mailRecipient','mailMarket','mailIntro','mailReason','followupContext','draftSubject','draftBody'];
